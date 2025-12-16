@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votación - Gargolas Community Awards</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>GCA</h1>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="categorias.html">Categorías</a>
+        </nav>
+        <button class="btn-votar" onclick="location.href='votacion.html'">Votar Ahora</button>
+    </header>
+
+    <div class="votacion-container">
+        <h1 class="votacion-title" id="categoria-titulo">CARGANDO...</h1>
+        <div class="modo-juego">Modo Juego</div>
+
+        <div class="votacion-grid" id="nominados-grid">
+            <!-- Los nominados se cargan con JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // ====== CONFIGURA TUS CATEGORÍAS AQUÍ ======
+        const categorias = [
+            {
+                titulo: "CHATTER DEL AÑO",
+                nominados: [
+                    { nombre: "timotopo", desc: '"timotopo es para lolo y su carrera lo que fue Juanceto01 para el momo"', img: "imagenes/timotopo.jpg" },
+                    { nombre: "asapraml", desc: "licenciado zaza y anti niperos", img: "imagenes/asapraml.jpg" },
+                    { nombre: "sacksu", desc: "chatter profesional", img: "imagenes/sacksu.jpg" },
+                    { nombre: "pachudanl", desc: "rapero joseador de paraguay", img: "imagenes/pachudanl.jpg" },
+                    { nombre: "ztample", desc: "chatter profesional", img: "imagenes/ztample.jpg" }
+                ]
+            },
+            {
+                titulo: "MOD DEL AÑO",
+                nominados: [
+                    { nombre: "matiaz0800", desc: "OG", img: "imagenes/matiaz0800.jpg" },
+                    { nombre: "6tincho", desc: "Owner de Joseo Shirts y OPD", img: "imagenes/6tincho.jpg" },
+                    { nombre: "crunchyroll", desc: "el primer mod de rageylo", img: "imagenes/crunchyroll.jpg" },
+                    { nombre: "yesk", desc: "inteligencia artificial", img: "imagenes/yesk.jpg" },
+                    { nombre: "sacksu", desc: "chatter profesional", img: "imagenes/sacksu2.jpg" }
+                ]
+            }
+            // AÑADE MÁS CATEGORÍAS AQUÍ CON EL MISMO FORMATO
+        ];
+
+        let categoriaActual = 0;
+        const totalCategorias = categorias.length;
+
+        function cargarCategoria() {
+            if (categoriaActual >= totalCategorias) {
+                // Votación terminada
+                localStorage.setItem('gca_votacion_completa', 'true');
+                location.href = 'gracias.html';
+                return;
+            }
+
+            const cat = categorias[categoriaActual];
+            document.getElementById('categoria-titulo').textContent = cat.titulo;
+
+            const grid = document.getElementById('nominados-grid');
+            grid.innerHTML = '';
+
+            cat.nominados.forEach(nominado => {
+                const card = document.createElement('div');
+                card.className = 'votacion-card';
+                card.innerHTML = `
+                    <img src="${nominado.img}" alt="${nominado.nombre}">
+                    <div class="card-info">
+                        <h3>${nominado.nombre}</h3>
+                        <p>${nominado.desc}</p>
+                        <button class="btn-votar-card" onclick="votarYAvanzar()">
+                            Votar 👍
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function votarYAvanzar() {
+            categoriaActual++;
+            localStorage.setItem('gca_categoria_actual', categoriaActual);
+            cargarCategoria();
+        }
+
+        // Al cargar la página
+        window.onload = function() {
+            // Verificar si ya votó todo
+            if (localStorage.getItem('gca_votacion_completa') === 'true') {
+                location.href = 'gracias.html';
+                return;
+            }
+
+            // Recuperar progreso
+            const progreso = localStorage.getItem('gca_categoria_actual');
+            if (progreso) {
+                categoriaActual = parseInt(progreso);
+            }
+
+            cargarCategoria();
+        };
+    </script>
+</body>
+</html>
